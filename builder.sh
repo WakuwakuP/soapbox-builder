@@ -1,31 +1,26 @@
 #!/bin/sh
 CMD=$1
-BACKEND_URL=$2
+BACKEND_DOMAIN=$2
 
 usage() {
 cat <<USAGE
-Usage: $0 [CMD] [BACKEND_URL]
-  CMD        : build | build-before | build-after
-  BACKEND_URL: https://example.com
+Usage: $0 [CMD] [BACKEND_DOMAIN]
+  CMD           : build | build-before | build-after
+  BACKEND_DOMAIN: example.com
 USAGE
 }
 
 build() {
-  echo "create .env"  
-  echo "NODE_ENV=production" > soapbox/.env
-  echo "BACKEND_URL=$BACKEND_URL" >> soapbox/.env
-  echo "PROXY_HTTPS_INSECURE=true" >> soapbox/.env
   cd soapbox && yarn && yarn build
-  rm -r ../build/$BACKEND_URL
-  mkdir ../build/$BACKEND_URL
-  mv ./static/* ../build/$BACKEND_URL/
-  rm .env
+  rm -r ../build/$BACKEND_DOMAIN
+  mkdir ../build/$BACKEND_DOMAIN
+  mv ./static/* ../build/$BACKEND_DOMAIN/
 }
 
 build-before() {
   echo "create .env"  
   echo "NODE_ENV=production" > soapbox/.env
-  echo "BACKEND_URL=$BACKEND_URL" >> soapbox/.env
+  echo "BACKEND_URL=https://$BACKEND_DOMAIN" >> soapbox/.env
   echo "PROXY_HTTPS_INSECURE=true" >> soapbox/.env
 }
 
