@@ -1,5 +1,5 @@
 # soapbox-builder
 
 ```shell
-./builder.sh <BACKEND_URL>
+./builder.sh build <BACKEND_URL>
 ```
