@@ -1,0 +1,3 @@
+[submodule "soapbox.git"]
+	path = soapbox
+	url = https://gitlab.com/soapbox-pub/soapbox.git
