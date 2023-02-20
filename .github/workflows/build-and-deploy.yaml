@@ -1,0 +1,125 @@
+name: Soapbox Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: soapbox/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('soapbox/yarn.lock') }}-${{ hashFiles('soapbox/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: yarn install
+        if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+        run: cd soapbox && yarn
+  
+  build-soapbox-wakuwakup-net:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: soapbox/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('soapbox/yarn.lock') }}-${{ hashFiles('soapbox/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Build soapbox.wakuwakup.net
+        run: cd soapbox && yarn build
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          BACKEND_URL: ${{ secrets.BACKEND_URL_WAKUWAKUP_NET }}
+          PROXY_HTTPS_INSECURE: ${{ secrets.PROXY_HTTPS_INSECURE }}
+      - name: Upload artifact soapbox.wakuwakup.net
+        uses: actions/upload-artifact@v2
+        with:
+          name: soapbox-fe-wakuwakup-net
+          path: soapbox/static
+    
+  build-soapbox-nagi-fan:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: soapbox/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('soapbox/yarn.lock') }}-${{ hashFiles('soapbox/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Build sb.nagi.fan
+        run: cd soapbox && yarn build
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          BACKEND_URL: ${{ secrets.BACKEND_URL_NAGI_FAN }}
+          PROXY_HTTPS_INSECURE: ${{ secrets.PROXY_HTTPS_INSECURE }}
+      - name: Upload artifact soapbox.wakuwakup.net
+        uses: actions/upload-artifact@v2
+        with:
+          name: soapbox-fe-nagi-fan
+          path: soapbox/static
+
+  deploy-soapbox-wakuwakup-net:
+    runs-on: ubuntu-latest
+    needs: [build-soapbox-wakuwakup-net]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Download artifact soapbox.wakuwakup.net
+        uses: actions/download-artifact@v2
+        with:
+          name: soapbox-fe-wakuwakup-net
+          path: soapbox/static
+      - name: Deploy soapbox.wakuwakup.net
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          directory: soapbox/static
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: soapbox-wakuwakup-net-action
+  
+  deploy-soapbox-nagi-fan:
+    runs-on: ubuntu-latest
+    needs: [build-soapbox-nagi-fan]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Download artifact sb.nagi.fan
+        uses: actions/download-artifact@v2
+        with:
+          name: soapbox-fe-nagi-fan
+          path: soapbox/static
+      - name: Deploy sb.nagi.fan
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          directory: soapbox/static
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: soapbox-nagi-fan-action
