@@ -110,7 +110,7 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          directory: soapbox
+          directory: soapbox/static
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: soapbox-wakuwakup-net-action
   
