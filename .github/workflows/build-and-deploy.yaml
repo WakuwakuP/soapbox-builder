@@ -99,7 +99,7 @@ jobs:
     needs: [build-soapbox-wakuwakup-net]
     steps:
       - name: Download artifact soapbox.wakuwakup.net
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: soapbox-fe-wakuwakup-net
           path: soapbox
@@ -119,7 +119,7 @@ jobs:
     needs: [build-soapbox-nagi-fan]
     steps:
       - name: Download artifact sb.nagi.fan
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: soapbox-fe-nagi-fan
           path: soapbox
