@@ -7,12 +7,12 @@ on:
 
 jobs:
   initialize:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7.0.1
         with:
           submodules: true
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: "18"
       - uses: actions/cache@v3
@@ -27,13 +27,13 @@ jobs:
         run: cd soapbox && yarn
 
   build-soapbox-wakuwakup-net:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [initialize]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7.0.1
         with:
           submodules: true
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: "18"
       - uses: actions/cache@v3
@@ -55,19 +55,19 @@ jobs:
         run: zip -qq -r soapbox-fe.zip .
         working-directory: soapbox/dist
       - name: Upload artifact soapbox.wakuwakup.net
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: soapbox-fe-wakuwakup-net
           path: soapbox/dist/soapbox-fe.zip
 
   build-soapbox-nagi-fan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [initialize]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7.0.1
         with:
           submodules: true
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: "18"
       - uses: actions/cache@v3
@@ -89,17 +89,17 @@ jobs:
         run: zip -qq -r soapbox-fe.zip .
         working-directory: soapbox/dist
       - name: Upload artifact soapbox.wakuwakup.net
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: soapbox-fe-nagi-fan
           path: soapbox/dist/soapbox-fe.zip
 
   deploy-soapbox-wakuwakup-net:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [build-soapbox-wakuwakup-net]
     steps:
       - name: Download artifact soapbox.wakuwakup.net
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8.0.2
         with:
           name: soapbox-fe-wakuwakup-net
           path: soapbox
@@ -115,11 +115,11 @@ jobs:
           projectName: soapbox-wakuwakup-net-action
 
   deploy-soapbox-nagi-fan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [build-soapbox-nagi-fan]
     steps:
       - name: Download artifact sb.nagi.fan
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8.0.2
         with:
           name: soapbox-fe-nagi-fan
           path: soapbox
